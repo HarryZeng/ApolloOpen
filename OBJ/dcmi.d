@@ -83,3 +83,4 @@
 ..\obj\dcmi.o: ..\HARDWARE\LED\led.h
 ..\obj\dcmi.o: ..\HARDWARE\OV5640\ov5640.h
 ..\obj\dcmi.o: ..\HARDWARE\OV5640\sccb.h
+..\obj\dcmi.o: ..\SYSTEM\delay\delay.h

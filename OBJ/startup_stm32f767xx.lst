@@ -1013,11 +1013,10 @@ ARM Macro Assembler    Page 16
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M7.fp.sp --apcs=
 interwork --depend=..\obj\startup_stm32f767xx.d -o..\obj\startup_stm32f767xx.o 
--ID:\ZHR\PersonalData\Project\OpenProject\Code\ApolloOpen\USER\RTE -Id:\Keil_v5
-\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include -I
-d:\Keil_v5\ARM\CMSIS\Include --predefine="__UVISION_VERSION SETA 520" --predefi
-ne="STM32F767xx SETA 1" --list=..\obj\startup_stm32f767xx.lst ..\CORE\startup_s
-tm32f767xx.s
+-I.\RTE\_CAMERA -Id:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\Drivers\CMSIS\De
+vice\ST\STM32F7xx\Include -Id:\Keil_v5\ARM\CMSIS\Include --predefine="__UVISION
+_VERSION SETA 524" --predefine="STM32F767xx SETA 1" --list=..\obj\startup_stm32
+f767xx.lst ..\CORE\startup_stm32f767xx.s
 
 
 

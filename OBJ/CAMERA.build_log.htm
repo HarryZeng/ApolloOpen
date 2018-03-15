@@ -3,60 +3,74 @@
 <pre>
 <h1>礦ision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: μVision V5.20.0.39
-Copyright (C) 2016 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: ZHR Microsoft, Microsoft, LIC=Z3C01-CE85R-IMF9B-2XH27-YTS5P-2L3Z7
+IDE-Version: μVision V5.24.2.0
+Copyright (C) 2017 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: harry Windows, HP Inc., LIC=WHYHL-0ND1J-DY6V3-AN8TA-T25WZ-PSLWG
  
 Tool Versions:
-Toolchain:       MDK-ARM Professional  Version: 5.14.0.0
+Toolchain:       MDK-ARM Plus  Version: 5.24.1
 Toolchain Path:  d:\Keil_v5\ARM\ARMCC\Bin
-C Compiler:      Armcc.exe V5.05 update 1 (build 106)
-Assembler:       Armasm.exe V5.05 update 1 (build 106)
-Linker/Locator:  ArmLink.exe V5.05 update 1 (build 106)
-Library Manager: ArmAr.exe V5.05 update 1 (build 106)
-Hex Converter:   FromElf.exe V5.05 update 1 (build 106)
-CPU DLL:         SARMCM3.DLL V5.14.0.0
-Dialog DLL:      DCM.DLL V1.13.1.0
-Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.14.0_KEIL
-Dialog DLL:      TCM.DLL V1.14.4.0
+C Compiler:      Armcc.exe V5.06 update 5 (build 528)
+Assembler:       Armasm.exe V5.06 update 5 (build 528)
+Linker/Locator:  ArmLink.exe V5.06 update 5 (build 528)
+Library Manager: ArmAr.exe V5.06 update 5 (build 528)
+Hex Converter:   FromElf.exe V5.06 update 5 (build 528)
+CPU DLL:         SARMCM3.DLL V5.24.1
+Dialog DLL:      DCM.DLL V1.16.0.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.1.0
+Dialog DLL:      TCM.DLL V1.32.0.0
  
 <h2>Project:</h2>
-D:\ZHR\PersonalData\Project\OpenProject\Code\ApolloOpen\USER\CAMERA.uvprojx
+D:\MrWu\OpenMR\Code\ApolloOpen_OMV\ApolloOpen\USER\CAMERA.uvprojx
 Project File Date:  03/15/2018
 
 <h2>Output:</h2>
-*** Using Compiler 'V5.05 update 1 (build 106)', folder: 'd:\Keil_v5\ARM\ARMCC\Bin'
+*** Using Compiler 'V5.06 update 5 (build 528)', folder: 'd:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'CAMERA'
-compiling dcmi.c...
 compiling main.c...
-main.c(307): warning:  #177-D: variable "k" was declared but never referenced
+main.c(118): warning:  #177-D: variable "k"  was declared but never referenced
+  	uint32_t k;
+main.c(119): warning:  #177-D: variable "i"  was declared but never referenced
+  	u16 i;
+main.c(120): warning:  #177-D: variable "rlen"  was declared but never referenced
+  	u16 rlen;			//剩余数据长度
+main.c(121): warning:  #177-D: variable "pbuf"  was declared but never referenced
+  	u32 *pbuf;
+main.c(312): warning:  #177-D: variable "k"  was declared but never referenced
   	u32 k;
-main.c(308): warning:  #177-D: variable "fac" was declared but never referenced
+main.c(313): warning:  #177-D: variable "fac"  was declared but never referenced
   	u8 res,fac;							 
-main.c(310): warning:  #177-D: variable "key" was declared but never referenced
+main.c(315): warning:  #177-D: variable "key"  was declared but never referenced
   	u8 key;						//键值		   
-main.c(311): warning:  #177-D: variable "i" was declared but never referenced
+main.c(316): warning:  #177-D: variable "i"  was declared but never referenced
   	u8 i;						 
-main.c(312): warning:  #550-D: variable "sd_ok" was set but never used
+main.c(317): warning:  #550-D: variable "sd_ok"  was set but never used
   	u8 sd_ok=1;					//0,sd卡不正常;1,SD卡正常. 
-main.c(313): warning:  #177-D: variable "scale" was declared but never referenced
+main.c(318): warning:  #177-D: variable "scale"  was declared but never referenced
    	u8 scale=1;					//默认是全尺寸缩放
-main.c(314): warning:  #177-D: variable "msgbuf" was declared but never referenced
+main.c(319): warning:  #177-D: variable "msgbuf"  was declared but never referenced
   	u8 msgbuf[15];				//消息缓存区 
-main.c(315): warning:  #550-D: variable "outputheight" was set but never used
+main.c(320): warning:  #550-D: variable "outputheight"  was set but never used
   	u16 outputheight=0;
-main.c: 8 warnings, 0 errors
+main.c: 12 warnings, 0 errors
 linking...
-Program Size: Code=76272 RO-data=26268 RW-data=576 ZI-data=33903624  
+Program Size: Code=76284 RO-data=26084 RW-data=576 ZI-data=33903624  
 FromELF: creating hex file...
-"..\OBJ\CAMERA.axf" - 0 Error(s), 8 Warning(s).
+"..\OBJ\CAMERA.axf" - 0 Error(s), 12 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.STM32F7xx_DFP.2.9.0.pack
+                Keil.STM32F7xx_DFP.2.9.0
+                STMicroelectronics STM32F7 Series Device Support, Drivers and Examples
 
 <h2>Collection of Component include folders:</h2>
-  D:\ZHR\PersonalData\Project\OpenProject\Code\ApolloOpen\USER\RTE
+  .\RTE\_CAMERA
   d:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:06
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>

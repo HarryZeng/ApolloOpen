@@ -52,77 +52,104 @@ volatile u8 jpeg_data_ok=0;				//JPEG数据采集完成标志
 		 
 //处理JPEG数据
 //当采集完一帧JPEG数据后,调用此函数,切换JPEG BUF.开始下一帧采集.
+
+void Cam_Start(void)
+{
+//    LCD_SetCursor(0,0);  
+//		LCD_WriteRAM_Prepare();		        //开始写入GRAM
+    __HAL_DMA_ENABLE(&DMADMCI_Handler); //使能DMA
+    DCMI->CR|=DCMI_CR_CAPTURE;          //DCMI捕获使能
+
+}
+void Cam_Spot(void)
+{
+    DCMI->CR&=~(DCMI_CR_CAPTURE);       //关闭捕获
+    while(DCMI->CR&0X01);               //等待传输完成
+    __HAL_DMA_DISABLE(&DMADMCI_Handler);//关闭DMA
+		
+}
+
+
+extern uint16_t version ;
+extern uint8_t Frame_Flag;
+
 void jpeg_data_process(void)
 {
-	u16 i;
-	u16 rlen;			//剩余数据长度
-	u32 *pbuf;
-	curline=yoffset;	//行数复位
-	if(ovx_mode&0X01)	//只有在JPEG格式下,才需要做处理.
-	{
-		if(jpeg_data_ok==0)	//jpeg数据还未采集完?
-		{
-			DMA2_Stream1->CR&=~(1<<0);		//停止当前传输
-			while(DMA2_Stream1->CR&0X01);	//等待DMA2_Stream1可配置 
-			rlen=jpeg_line_size-DMA2_Stream1->NDTR;//得到剩余数据长度	
-			pbuf=jpeg_data_buf+jpeg_data_len;//偏移到有效数据末尾,继续添加
-			if(DMA2_Stream1->CR&(1<<19))for(i=0;i<rlen;i++)pbuf[i]=dcmi_line_buf[1][i];//读取buf1里面的剩余数据
-			else for(i=0;i<rlen;i++)pbuf[i]=dcmi_line_buf[0][i];//读取buf0里面的剩余数据 
-			jpeg_data_len+=rlen;			//加上剩余长度
-			jpeg_data_ok=1; 				//标记JPEG数据采集完按成,等待其他函数处理
-		}
-		if(jpeg_data_ok==2)	//上一次的jpeg数据已经被处理了
-		{
-			DMA2_Stream1->NDTR=jpeg_line_size;//传输长度为jpeg_buf_size*4字节
-			DMA2_Stream1->CR|=1<<0;			//重新传输
-			jpeg_data_ok=0;					//标记数据未采集
-			jpeg_data_len=0;				//数据重新开始
-		}
-	}else
-	{  
-		if(bmp_request==1)	//有bmp拍照请求,关闭DCMI
-		{
-			DCMI_Stop();	//停止DCMI
-			bmp_request=0;	//标记请求处理完成.
-		}
-		LCD_SetCursor(0,0);  
-		LCD_WriteRAM_Prepare();				//开始写入GRAM  
-	}  
+//	u16 i;
+//	u16 rlen;			//剩余数据长度
+//	u32 *pbuf;
+//	curline=yoffset;	//行数复位
+//	if(ovx_mode&0X01)	//只有在JPEG格式下,才需要做处理.
+//	{
+//		if(jpeg_data_ok==0)	//jpeg数据还未采集完?
+//		{
+//			DMA2_Stream1->CR&=~(1<<0);		//停止当前传输
+//			while(DMA2_Stream1->CR&0X01);	//等待DMA2_Stream1可配置 
+//			rlen=jpeg_line_size-DMA2_Stream1->NDTR;//得到剩余数据长度	
+//			pbuf=jpeg_data_buf+jpeg_data_len;//偏移到有效数据末尾,继续添加
+//			if(DMA2_Stream1->CR&(1<<19))for(i=0;i<rlen;i++)pbuf[i]=dcmi_line_buf[1][i];//读取buf1里面的剩余数据
+//			else for(i=0;i<rlen;i++)pbuf[i]=dcmi_line_buf[0][i];//读取buf0里面的剩余数据 
+//			jpeg_data_len+=rlen;			//加上剩余长度
+//			jpeg_data_ok=1; 				//标记JPEG数据采集完按成,等待其他函数处理
+//		}
+//		if(jpeg_data_ok==2)	//上一次的jpeg数据已经被处理了
+//		{
+//			DMA2_Stream1->NDTR=jpeg_line_size;//传输长度为jpeg_buf_size*4字节
+//			DMA2_Stream1->CR|=1<<0;			//重新传输
+//			jpeg_data_ok=0;					//标记数据未采集
+//			jpeg_data_len=0;				//数据重新开始
+//		}
+//	}else
+//	{  
+//		if(bmp_request==1)	//有bmp拍照请求,关闭DCMI
+//		{
+//			DCMI_Stop();	//停止DCMI
+//			bmp_request=0;	//标记请求处理完成.
+//		}
+//		LCD_SetCursor(0,0);  
+//		LCD_WriteRAM_Prepare();				//开始写入GRAM  
+//	}  
 } 
 
 //处理JPEG数据
 //当采集完一帧JPEG数据后,调用此函数,切换JPEG BUF.开始下一帧采集.
 void raw_data_process(void)
 {
+	uint32_t k;
 	u16 i;
 	u16 rlen;			//剩余数据长度
 	u32 *pbuf;
 	curline=yoffset;	//行数复位
-	if(ovx_mode&0X01)	//只有在JPEG格式下,才需要做处理.
-	{
-		if(jpeg_data_ok==0)	//jpeg数据还未采集完?
-		{
-			DMA2_Stream1->CR&=~(1<<0);		//停止当前传输
-			while(DMA2_Stream1->CR&0X01);	//等待DMA2_Stream1可配置 
-			rlen=jpeg_line_size-DMA2_Stream1->NDTR;//得到剩余数据长度	
-			pbuf=jpeg_data_buf+jpeg_data_len;//偏移到有效数据末尾,继续添加
-			if(DMA2_Stream1->CR&(1<<19))for(i=0;i<rlen;i++)pbuf[i]=dcmi_line_buf[1][i];//读取buf1里面的剩余数据
-			else for(i=0;i<rlen;i++)pbuf[i]=dcmi_line_buf[0][i];//读取buf0里面的剩余数据 
-			jpeg_data_len+=rlen;			//加上剩余长度
-			jpeg_data_ok=1; 				//标记JPEG数据采集完按成,等待其他函数处理
-		}
-		if(jpeg_data_ok==2)	//上一次的jpeg数据已经被处理了
-		{
-			DMA2_Stream1->NDTR=jpeg_line_size;//传输长度为jpeg_buf_size*4字节
-			DMA2_Stream1->CR|=1<<0;			//重新传输
-			jpeg_data_ok=0;					//标记数据未采集
-			jpeg_data_len=0;				//数据重新开始
-		}
-	}else
-	{  
-		LCD_SetCursor(0,0);  
-		LCD_WriteRAM_Prepare();				//开始写入GRAM  
-	}  
+
+//		DMA2_Stream1->CR&=~(1<<0);		//停止当前传输
+//		while(DMA2_Stream1->CR&0X01);	//等待DMA2_Stream1可配置 
+//		rlen=jpeg_line_size-DMA2_Stream1->NDTR;//得到剩余数据长度	
+//		pbuf=jpeg_data_buf+jpeg_data_len;//偏移到有效数据末尾,继续添加
+//		if(DMA2_Stream1->CR&(1<<19))
+//			for(i=0;i<rlen;i++)
+//				pbuf[i]=dcmi_line_buf[1][i];//读取buf1里面的剩余数据
+//		else 
+//			for(i=0;i<rlen;i++)
+//				pbuf[i]=dcmi_line_buf[0][i];//读取buf0里面的剩余数据 
+//		jpeg_data_len+=rlen;			//加上剩余长度
+//		jpeg_data_ok=1; 				//标记JPEG数据采集完按成,等待其他函数处理
+//	
+//			LCD_WriteRAM(yuv422_to_Gray(temp_l));
+//			DCMI_Stop(); 			//停止DMA搬运
+//			LCD_SetCursor(0,0);
+//			for(k=0;k<lcddev.width/2;k++)
+//					LCD_WriteRAM(dcmi_line_buf[0][i]);
+				//delay_ms(2);
+//				LCD_SetCursor(0,0);
+//				LCD_WriteRAM_Prepare();
+//				while(Frame_Flag)
+//				{
+//					delay_ms(5);
+//				}
+//				DCMI_Start(); 			//启动传输 
+//				Frame_Flag=1;				
+//				
+
 }
 
 //jpeg数据接收回调函数
@@ -280,28 +307,6 @@ u8 ov5640_jpg_photo(u8 *pname)
 }  
 
 
-void Cam_Start(void)
-{
-//    LCD_SetCursor(0,0);  
-//		LCD_WriteRAM_Prepare();		        //开始写入GRAM
-    __HAL_DMA_ENABLE(&DMADMCI_Handler); //使能DMA
-    DCMI->CR|=DCMI_CR_CAPTURE;          //DCMI捕获使能
-
-}
-void Cam_Spot(void)
-{
-    DCMI->CR&=~(DCMI_CR_CAPTURE);       //关闭捕获
-    while(DCMI->CR&0X01);               //等待传输完成
-    __HAL_DMA_DISABLE(&DMADMCI_Handler);//关闭DMA
-		
-}
-
-
-extern uint16_t version ;
-extern uint8_t Frame_Flag;
-
-//extern uint32_t RAW_BUF[76800];
-
 int main(void)
 {
 	u32 k;
@@ -361,8 +366,8 @@ int main(void)
 		sd_ok=0;  	
 	} 	
 	dcmi_line_buf[0]=mymalloc(SRAMIN,jpeg_line_size*4);	//为jpeg dma接收申请内存	
-	//dcmi_line_buf[1]=mymalloc(SRAMIN,jpeg_line_size*4);	//为jpeg dma接收申请内存	
-	//jpeg_data_buf=mymalloc(SRAMEX,jpeg_buf_size);		//为jpeg文件申请内存(最大4MB)
+	dcmi_line_buf[1]=mymalloc(SRAMIN,jpeg_line_size*4);	//为jpeg dma接收申请内存	
+	jpeg_data_buf=mymalloc(SRAMEX,jpeg_buf_size);		//为jpeg文件申请内存(最大4MB)
  	pname=mymalloc(SRAMIN,30);//为带路径的文件名分配30个字节的内存	 
  	while(pname==NULL||!dcmi_line_buf[0]||!dcmi_line_buf[1]||!jpeg_data_buf)	//内存分配出错
  	{	    
@@ -399,6 +404,7 @@ int main(void)
 	}else					//MCU 屏
 	{
 		DCMI_DMA_Init((u32)&LCD->LCD_RAM,0,1,DMA_MDATAALIGN_HALFWORD,DMA_MINC_DISABLE);			//DCMI DMA配置,MCU屏,竖屏
+		//DCMI_DMA_Init((u32)dcmi_line_buf[0],0,lcddev.width/2,DMA_MDATAALIGN_HALFWORD,DMA_MINC_ENABLE);//DCMI DMA配置  	
 	}
 	/********设置分辨率***********/
 	if(lcddev.height>800)
@@ -417,23 +423,33 @@ int main(void)
 	//LCD_Set_Window(0,0,640,480);
 	
 		DCMI_Start(); 			//启动传输
-		ovx_mode = 1;
+		//ovx_mode = 1;
 	//LCD_Clear(GRAY);
  	while(1)
 	{
 				DCMI_Start(); 			//启动传输
-//			Cam_Start();	
-//			delay_ms(2);
-//			while(Frame_Flag)
-//			{
-//				delay_ms(5);
-//			}
-//			DCMI_Stop(); 			//停止DMA搬运
-//			Frame_Flag=1;				
-//			LCD_SetCursor(0,0);
-//			LCD_WriteRAM_Prepare();
-		
-		
+				//Cam_Start();	
+				delay_ms(20);
+				while(Frame_Flag)
+				{
+					delay_ms(50);
+				}
+				Frame_Flag=1;	
+				DCMI_Stop(); 			//停止DMA搬运
+					LCD_SetCursor(0,0);
+					LCD_WriteRAM_Prepare();
+//					for(k=0;k<lcddev.width/2;k++)
+//							LCD_WriteRAM(655);	//LCD->LCD_RAM = dcmi_line_buf[0][k];	LCD_WriteRAM(65535);
+
+//				Frame_Flag=1;				
+//				LCD_SetCursor(0,0);
+//				LCD_WriteRAM_Prepare();
+	
+//							for(k=0;k<lcddev.width/2;k++)
+//							{
+//								LCD_WriteRAM(dcmi_line_buf[0][k]);
+//							}
+		//LCD_WriteRAM(dcmi_line_buf[0][i]);
 //		for(k=0;k<(480*320);k++)
 //		{
 //			LCD->LCD_RAM = 655;

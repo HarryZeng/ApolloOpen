@@ -4,6 +4,7 @@
 #include "ltdc.h"
 #include "led.h" 
 #include "ov5640.h" 
+#include "delay.h"
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK STM32F7开发板
@@ -127,9 +128,9 @@ void DCMI_DMA_Init(u32 mem0addr,u32 mem1addr,u16 memsize,u32 memblen,u32 meminc)
     
 	
     // Configure and disable DMA IRQ Channel
-    HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, IRQ_PRI_DMA21, IRQ_SUBPRI_DMA21);
-    HAL_NVIC_DisableIRQ(DMA2_Stream1_IRQn);	
-	
+//    HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, IRQ_PRI_DMA21, IRQ_SUBPRI_DMA21);
+//    HAL_NVIC_DisableIRQ(DMA2_Stream1_IRQn);	
+//	
     //在开启DMA之前先使用__HAL_UNLOCK()解锁一次DMA,因为HAL_DMA_Statrt()HAL_DMAEx_MultiBufferStart()
     //这两个函数一开始要先使用__HAL_LOCK()锁定DMA,而函数__HAL_LOCK()会判断当前的DMA状态是否为锁定状态，如果是
     //锁定状态的话就直接返回HAL_BUSY，这样会导致函数HAL_DMA_Statrt()和HAL_DMAEx_MultiBufferStart()后续的DMA配置
@@ -151,8 +152,8 @@ void DCMI_DMA_Init(u32 mem0addr,u32 mem1addr,u16 memsize,u32 memblen,u32 meminc)
 //DCMI,启动传输
 void DCMI_Start(void)
 {  
-//    LCD_SetCursor(0,0);  
-//		LCD_WriteRAM_Prepare();		        //开始写入GRAM
+    LCD_SetCursor(0,0);  
+		LCD_WriteRAM_Prepare();		        //开始写入GRAM
     __HAL_DMA_ENABLE(&DMADMCI_Handler); //使能DMA
     DCMI->CR|=DCMI_CR_CAPTURE;          //DCMI捕获使能
 
@@ -179,13 +180,15 @@ uint8_t Frame_Flag;
 
 void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
 {
+		
 		//jpeg_data_process();//jpeg数据处理
-		raw_data_process();//jpeg数据处理
+		//DCMI_Stop(); 			//停止DMA搬运
+		Frame_Flag = 0;
+		//raw_data_process();//jpeg数据处理
+		//DCMI_Stop(); 			//停止DMA搬运
 		LED1_Toggle;
 		ov_frame++; 
-//    LCD_SetCursor(0,0);  
-//		LCD_WriteRAM_Prepare();		        //开始写入GRAM
-		Frame_Flag = 0;
+		//DCMI_Start(); 			//启动传输
     //重新使能帧中断,因为HAL_DCMI_IRQHandler()函数会关闭帧中断
     __HAL_DCMI_ENABLE_IT(&DCMI_Handler,DCMI_IT_FRAME);
 }
@@ -197,7 +200,7 @@ void DMA2_Stream1_IRQHandler(void)
     if(__HAL_DMA_GET_FLAG(&DMADMCI_Handler,DMA_FLAG_TCIF1_5)!=RESET)//DMA传输完成
     {
         __HAL_DMA_CLEAR_FLAG(&DMADMCI_Handler,DMA_FLAG_TCIF1_5);//清除DMA传输完成中断标志位
-        dcmi_rx_callback();	//执行摄像头接收回调函数,读取数据等操作在这里面处理
+        //dcmi_rx_callback();	//执行摄像头接收回调函数,读取数据等操作在这里面处理
 		SCB_CleanInvalidateDCache();	//清除无效的D-Cache
     } 
 }

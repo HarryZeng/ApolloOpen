@@ -74,7 +74,6 @@ u16 LCD_ReadReg(u16 LCD_Reg)
 void LCD_WriteRAM_Prepare(void)
 {
  	LCD->LCD_REG=lcddev.wramcmd;	
-	//LCD->LCD_REG=lcddev.wramcmd; //20180315
 }	 
 //LCDÐ´GRAM
 //RGB_Code:ÑÕÉ«Öµ
