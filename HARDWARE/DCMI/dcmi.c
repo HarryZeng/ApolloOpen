@@ -36,18 +36,31 @@ extern void raw_data_process(void);
 void DCMI_Init(void)
 {
     DCMI_Handler.Instance=DCMI;
+
     DCMI_Handler.Init.SynchroMode=DCMI_SYNCHRO_HARDWARE;    //硬件同步HSYNC,VSYNC
+		DCMI_Handler.Init.JPEGMode = DISABLE;
     DCMI_Handler.Init.PCKPolarity=DCMI_PCKPOLARITY_FALLING;  //PCLK 上升沿有效
     DCMI_Handler.Init.VSPolarity=DCMI_VSPOLARITY_LOW;       //VSYNC 低电平有效
     DCMI_Handler.Init.HSPolarity=DCMI_HSPOLARITY_LOW;       //HSYNC 低电平有效
     DCMI_Handler.Init.CaptureRate=DCMI_CR_ALL_FRAME;        //全帧捕获
     DCMI_Handler.Init.ExtendedDataMode=DCMI_EXTEND_DATA_8B; //8位数据格式 
+	
+		/*STM32F769*/
+		DCMI_Handler.Init.ByteSelectMode  = DCMI_BSM_ALL;         // Capture all received bytes
+    DCMI_Handler.Init.ByteSelectStart = DCMI_OEBS_ODD;        // Ignored
+    DCMI_Handler.Init.LineSelectMode  = DCMI_LSM_ALL;         // Capture all received lines
+    DCMI_Handler.Init.LineSelectStart = DCMI_OELS_ODD;        // Ignored
+	
     HAL_DCMI_Init(&DCMI_Handler);                           //初始化DCMI 
     
      //关闭行中断、VSYNC中断、同步错误中断和溢出中断
     __HAL_DCMI_DISABLE_IT(&DCMI_Handler,DCMI_IT_LINE|DCMI_IT_VSYNC|DCMI_IT_ERR|DCMI_IT_OVR);
     __HAL_DCMI_ENABLE_IT(&DCMI_Handler,DCMI_IT_FRAME);      //使能帧中断
+	
+		//__HAL_DCMI_ENABLE_IT(&DCMI_Handler,DCMI_IT_VSYNC);      //使能帧中断
     __HAL_DCMI_ENABLE(&DCMI_Handler);                       //使能DCMI
+
+	//HAL_DCMI_Start_DMA(&DCMI_Handler,(u32)&DCMI->DR,mem0addr,memsize);
 }
 
 //DCMI底层驱动，引脚配置，时钟使能，中断配置
@@ -138,7 +151,9 @@ void DCMI_DMA_Init(u32 mem0addr,u32 mem1addr,u16 memsize,u32 memblen,u32 meminc)
     __HAL_UNLOCK(&DMADMCI_Handler);
     if(mem1addr==0)    //开启DMA，不使用双缓冲
     {
-        HAL_DMA_Start(&DMADMCI_Handler,(u32)&DCMI->DR,mem0addr,memsize);
+			
+				//HAL_DMA_Start(&DMADMCI_Handler,(u32)&DCMI->DR,mem0addr,memsize); //DCMI_MODE_CONTINUOUS  DCMI_MODE_SNAPSHOT
+				HAL_DCMI_Start_DMA(&DCMI_Handler,DCMI_MODE_CONTINUOUS,mem0addr,memsize);
     }
     else                //使用双缓冲
     {
@@ -177,18 +192,21 @@ void DCMI_IRQHandler(void)
 //hdcmi:DCMI句柄
 
 uint8_t Frame_Flag;
-
+uint8_t Frame_Time=0;
 void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
 {
 		
 		//jpeg_data_process();//jpeg数据处理
-		//DCMI_Stop(); 			//停止DMA搬运
+		
+		//DCMI_Stop();
 		Frame_Flag = 0;
-		//raw_data_process();//jpeg数据处理
-		//DCMI_Stop(); 			//停止DMA搬运
 		LED1_Toggle;
 		ov_frame++; 
-		//DCMI_Start(); 			//启动传输
+//		if(Frame_Time<50)
+//				Frame_Time++;
+//		else
+//			raw_data_process();
+			DCMI_Start(); 			//启动传输
     //重新使能帧中断,因为HAL_DCMI_IRQHandler()函数会关闭帧中断
     __HAL_DCMI_ENABLE_IT(&DCMI_Handler,DCMI_IT_FRAME);
 }

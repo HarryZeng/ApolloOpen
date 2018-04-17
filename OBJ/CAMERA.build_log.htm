@@ -27,34 +27,36 @@ Project File Date:  03/15/2018
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 5 (build 528)', folder: 'd:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'CAMERA'
+compiling mt9v034.c...
+..\HARDWARE\MT9V034\mt9v034.c(167): warning:  #177-D: variable "ret"  was declared but never referenced
+      int ret=0;
+..\HARDWARE\MT9V034\mt9v034.c(152): warning:  #177-D: function "reset"  was declared but never referenced
+  static int reset(void)
+..\HARDWARE\MT9V034\mt9v034.c: 2 warnings, 0 errors
 compiling main.c...
-main.c(118): warning:  #177-D: variable "k"  was declared but never referenced
-  	uint32_t k;
-main.c(119): warning:  #177-D: variable "i"  was declared but never referenced
-  	u16 i;
-main.c(120): warning:  #177-D: variable "rlen"  was declared but never referenced
+main.c(121): warning:  #177-D: variable "rlen"  was declared but never referenced
   	u16 rlen;			//剩余数据长度
-main.c(121): warning:  #177-D: variable "pbuf"  was declared but never referenced
+main.c(122): warning:  #177-D: variable "pbuf"  was declared but never referenced
   	u32 *pbuf;
-main.c(312): warning:  #177-D: variable "k"  was declared but never referenced
-  	u32 k;
-main.c(313): warning:  #177-D: variable "fac"  was declared but never referenced
+main.c(304): warning:  #177-D: variable "fac"  was declared but never referenced
   	u8 res,fac;							 
-main.c(315): warning:  #177-D: variable "key"  was declared but never referenced
+main.c(306): warning:  #177-D: variable "key"  was declared but never referenced
   	u8 key;						//键值		   
-main.c(316): warning:  #177-D: variable "i"  was declared but never referenced
+main.c(307): warning:  #177-D: variable "i"  was declared but never referenced
   	u8 i;						 
-main.c(317): warning:  #550-D: variable "sd_ok"  was set but never used
+main.c(308): warning:  #550-D: variable "sd_ok"  was set but never used
   	u8 sd_ok=1;					//0,sd卡不正常;1,SD卡正常. 
-main.c(318): warning:  #177-D: variable "scale"  was declared but never referenced
+main.c(309): warning:  #177-D: variable "scale"  was declared but never referenced
    	u8 scale=1;					//默认是全尺寸缩放
-main.c(319): warning:  #177-D: variable "msgbuf"  was declared but never referenced
+main.c(310): warning:  #177-D: variable "msgbuf"  was declared but never referenced
   	u8 msgbuf[15];				//消息缓存区 
-main.c(320): warning:  #550-D: variable "outputheight"  was set but never used
+main.c(311): warning:  #177-D: variable "outputheight"  was declared but never referenced
   	u16 outputheight=0;
-main.c: 12 warnings, 0 errors
+main.c(453): warning:  #1-D: last line of file ends without a newline
+  }
+main.c: 10 warnings, 0 errors
 linking...
-Program Size: Code=76284 RO-data=26084 RW-data=576 ZI-data=33903624  
+Program Size: Code=78776 RO-data=26084 RW-data=600 ZI-data=33903632  
 FromELF: creating hex file...
 "..\OBJ\CAMERA.axf" - 0 Error(s), 12 Warning(s).
 

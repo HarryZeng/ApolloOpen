@@ -159,19 +159,22 @@ static int reset(void)
     return 0;
 }
 
+    uint16_t width  ; 
+    uint16_t height ;
+		uint16_t MT9V034_Mode=0;
 static int set_framesize(uint16_t framesize)
 {
     int ret=0;
     uint16_t readmode = 0;
-    uint16_t width  = resolution[framesize][0]; 
-    uint16_t height = resolution[framesize][1];
+     width  = resolution[framesize][0]; 
+     height = resolution[framesize][1];
 
 	  width  = 320; 
     height = 240;
 	
-		MT9V034_Width = width;
-		MT9V034_height = height;
-	
+//		MT9V034_Width = width;
+//		MT9V034_height = height;
+//	
     if ((width * 4) <= MT9V034_MAX_WIDTH && (height * 4) <= MT9V034_MAX_HEIGHT) 
 		{
         width  *= 4; 
@@ -189,13 +192,15 @@ static int set_framesize(uint16_t framesize)
 
     readmode |= MT9V034_READ_MODE_ROW_FLIP;
     readmode |= MT9V034_READ_MODE_COL_FLIP;
-			//mt9v034_WriteReg16(MT9V034_READ_MODE, readmode);
-		//ret |= mt9v034_WriteReg16( MT9V034_WINDOW_WIDTH, width);
-		//ret |= mt9v034_WriteReg16( MT9V034_COL_START, (MT9V034_MAX_WIDTH  - width ) / 2 + MT9V034_COL_START_MIN);
-		//ret |= mt9v034_WriteReg16( MT9V034_WINDOW_HEIGHT, height);
-		//ret |= mt9v034_WriteReg16( MT9V034_ROW_START, (MT9V034_MAX_HEIGHT - height) / 2 + MT9V034_ROW_START_MIN);
-//			mt9v034_WriteReg16( MT9V034_COL_START,0x0001);
-//			mt9v034_WriteReg16( MT9V034_ROW_START,0x0004);
+//	mt9v034_WriteReg16(MT9V034_READ_MODE, readmode);			
+//			ret |= mt9v034_WriteReg16( MT9V034_WINDOW_WIDTH, width);
+//			ret |= mt9v034_WriteReg16( MT9V034_COL_START, (MT9V034_MAX_WIDTH  - width ) / 2 + MT9V034_COL_START_MIN);
+//			ret |= mt9v034_WriteReg16( MT9V034_WINDOW_HEIGHT, height);
+//			ret |= mt9v034_WriteReg16( MT9V034_ROW_START, (MT9V034_MAX_HEIGHT - height) / 2 + MT9V034_ROW_START_MIN);
+
+			mt9v034_WriteReg16(MT9V034_READ_MODE, 0x11);
+			mt9v034_WriteReg16( MT9V034_COL_START,0x0001);
+			mt9v034_WriteReg16( MT9V034_ROW_START,0x0004);
 			mt9v034_WriteReg16( MT9V034_WINDOW_HEIGHT, height);
 			mt9v034_WriteReg16( MT9V034_WINDOW_WIDTH, width);
 //			mt9v034_WriteReg16( MT9V034_HORIZONTAL_BLANKING, 0x005E);
@@ -206,7 +211,7 @@ static int set_framesize(uint16_t framesize)
 //			mt9v034_WriteReg16( MT9V034_SHUTTER_WIDTH2, 0x01D9);
 //		
 //			mt9v034_WriteReg16(MT9V034_READ_MODE, 0x0300);
-			//mt9v034_WriteReg16(MT9V034_PIXEL_OPERATION_MODE, 0x0011);
+//			mt9v034_WriteReg16(MT9V034_PIXEL_OPERATION_MODE, 0x0011);
 
     return 0;
 }

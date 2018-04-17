@@ -113,43 +113,33 @@ void jpeg_data_process(void)
 
 //处理JPEG数据
 //当采集完一帧JPEG数据后,调用此函数,切换JPEG BUF.开始下一帧采集.
+u32 startX,startY,endX,endY,runX,runY;
+	extern uint16_t MT9V034_Width,MT9V034_height;
 void raw_data_process(void)
 {
-	uint32_t k;
-	u16 i;
+	u32 i;
 	u16 rlen;			//剩余数据长度
 	u32 *pbuf;
 	curline=yoffset;	//行数复位
+	
+	startX = 1;
+	startY = 1;
+	
+	endX = MT9V034_height;
+	endY = MT9V034_Width;
 
-//		DMA2_Stream1->CR&=~(1<<0);		//停止当前传输
-//		while(DMA2_Stream1->CR&0X01);	//等待DMA2_Stream1可配置 
-//		rlen=jpeg_line_size-DMA2_Stream1->NDTR;//得到剩余数据长度	
-//		pbuf=jpeg_data_buf+jpeg_data_len;//偏移到有效数据末尾,继续添加
-//		if(DMA2_Stream1->CR&(1<<19))
-//			for(i=0;i<rlen;i++)
-//				pbuf[i]=dcmi_line_buf[1][i];//读取buf1里面的剩余数据
-//		else 
-//			for(i=0;i<rlen;i++)
-//				pbuf[i]=dcmi_line_buf[0][i];//读取buf0里面的剩余数据 
-//		jpeg_data_len+=rlen;			//加上剩余长度
-//		jpeg_data_ok=1; 				//标记JPEG数据采集完按成,等待其他函数处理
-//	
-//			LCD_WriteRAM(yuv422_to_Gray(temp_l));
-//			DCMI_Stop(); 			//停止DMA搬运
-//			LCD_SetCursor(0,0);
-//			for(k=0;k<lcddev.width/2;k++)
-//					LCD_WriteRAM(dcmi_line_buf[0][i]);
-				//delay_ms(2);
-//				LCD_SetCursor(0,0);
-//				LCD_WriteRAM_Prepare();
-//				while(Frame_Flag)
-//				{
-//					delay_ms(5);
-//				}
-//				DCMI_Start(); 			//启动传输 
-//				Frame_Flag=1;				
-//				
-
+	DCMI_Stop(); 			//停止DMA搬运
+	LCD_SetCursor(0,0);
+	
+	for(runY=startY;runY<=endY;runY++)
+	{
+		LCD_SetCursor(startX,runY);      				//设置光标位置 
+		LCD_WriteRAM_Prepare();     			//开始写入GRAM	  
+		for(runX=0;runX<endX;runX++)
+			LCD->LCD_RAM=dcmi_line_buf[0][i++];	//显示颜色 	    
+	}
+	DCMI_Start(); 			//启动传输 
+	Frame_Flag=1;
 }
 
 //jpeg数据接收回调函数
@@ -306,10 +296,11 @@ u8 ov5640_jpg_photo(u8 *pname)
 	return res;
 }  
 
+void MT9V034_TEST(void);
 
 int main(void)
 {
-	u32 k;
+	//u32 startX,startY,endX,endY,j;
 	u8 res,fac;							 
 	u8 *pname;					//带路径的文件名 
 	u8 key;						//键值		   
@@ -387,16 +378,8 @@ int main(void)
 	mt9v034_context_configuration();
 	LCD_ShowxNum(30,230,version,5,16,1);
 	
-//	//自动对焦初始化
-//	OV5640_RGB565_Mode();	//RGB565模式 
-//	OV5640_Focus_Init(); 
-//	OV5640_Light_Mode(0);	//自动模式
-//	OV5640_Color_Saturation(3);//色彩饱和度0
-//	OV5640_Brightness(4);	//亮度0
-//	OV5640_Contrast(3);		//对比度0
-//	OV5640_Sharpness(33);	//自动锐度
-//	OV5640_Focus_Constant();//启动持续对焦
 	DCMI_Init();			//DCMI配置
+	
 	if(lcdltdc.pwidth!=0)	//RGB屏
 	{
 		dcmi_rx_callback=rgblcd_dcmi_rx_callback;//RGB屏接收数据回调函数
@@ -404,43 +387,32 @@ int main(void)
 	}else					//MCU 屏
 	{
 		DCMI_DMA_Init((u32)&LCD->LCD_RAM,0,1,DMA_MDATAALIGN_HALFWORD,DMA_MINC_DISABLE);			//DCMI DMA配置,MCU屏,竖屏
-		//DCMI_DMA_Init((u32)dcmi_line_buf[0],0,lcddev.width/2,DMA_MDATAALIGN_HALFWORD,DMA_MINC_ENABLE);//DCMI DMA配置  	
+		//DCMI_DMA_Init((u32)dcmi_line_buf[0],0,MT9V034_Width*MT9V034_height,DMA_MDATAALIGN_HALFWORD,DMA_MINC_ENABLE);//DCMI DMA配置  	
 	}
-	/********设置分辨率***********/
-	if(lcddev.height>800)
-	{
-		yoffset=(lcddev.height-800)/2;
-		outputheight=800; 
-		//OV5640_WR_Reg(0x3035,0X51);//降低输出帧率，否则可能抖动
-	}else 
-	{
-		yoffset=0;
-		outputheight=lcddev.height;
-	}
-	curline=yoffset;		//行数复位
-	//OV5640_OutSize_Set(16,4,lcddev.width,outputheight);	//满屏缩放显示
+
+	LCD_Display_Dir(0);		//默认为竖屏
+	LCD_Set_Window(0,0,320,240);
 	
-	//LCD_Set_Window(0,0,640,480);
-	
-		DCMI_Start(); 			//启动传输
-		//ovx_mode = 1;
-	//LCD_Clear(GRAY);
+	DCMI_Start(); 			//启动传输
+//	LCD_Clear(BLACK);
+//	LCD_SetCursor(0,0);
+//	
+//	startX = 1;
+//	startY = 1;
+//	
+//	endX = 240;
+//	endY = 320;
+
  	while(1)
 	{
-				DCMI_Start(); 			//启动传输
-				//Cam_Start();	
-				delay_ms(20);
-				while(Frame_Flag)
-				{
-					delay_ms(50);
-				}
-				Frame_Flag=1;	
-				DCMI_Stop(); 			//停止DMA搬运
-					LCD_SetCursor(0,0);
-					LCD_WriteRAM_Prepare();
-//					for(k=0;k<lcddev.width/2;k++)
-//							LCD_WriteRAM(655);	//LCD->LCD_RAM = dcmi_line_buf[0][k];	LCD_WriteRAM(65535);
-
+		
+//		MT9V034_TEST();
+//		for(i=startY;i<=endY;i++)
+//		{
+//			LCD_SetCursor(startX,i);      				//设置光标位置 
+//			LCD_WriteRAM_Prepare();     			//开始写入GRAM	  
+//			for(j=0;j<endX;j++)LCD->LCD_RAM=RED;	//显示颜色 	    
+//		} 
 //				Frame_Flag=1;				
 //				LCD_SetCursor(0,0);
 //				LCD_WriteRAM_Prepare();
@@ -455,7 +427,7 @@ int main(void)
 //			LCD->LCD_RAM = 655;
 //		}
 		
-		//delay_ms(25);
+//		delay_ms(25);
 //		i++;
 //		if(i==20)//DS0闪烁.
 //		{
@@ -463,4 +435,19 @@ int main(void)
 //			LED0_Toggle;
 // 		}
 	}
+}
+
+void MT9V034_TEST(void)
+{
+		DCMI_Start(); 			//启动传输
+
+		delay_ms(20);
+		while(Frame_Flag)
+		{
+			delay_ms(50);
+		}
+		Frame_Flag=1;	
+		DCMI_Stop(); 			//停止DMA搬运
+		LCD_SetCursor(0,0);
+		LCD_WriteRAM_Prepare();
 }
