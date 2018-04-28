@@ -20,7 +20,7 @@ extern DCMI_HandleTypeDef DCMI_Handler;        //DCMI¾ä±ú
 extern DMA_HandleTypeDef  DMADMCI_Handler;     //DMA¾ä±ú
 
 void DCMI_Init(void);
-void DCMI_DMA_Init(u32 mem0addr,u32 mem1addr,u16 memsize,u32 memblen,u32 meminc);
+void DCMI_DMA_Init(u32 mem0addr,u32 mem1addr,u32 memsize,u32 memblen,u32 meminc);
 void DCMI_Start(void);
 void DCMI_Stop(void);
 void DCMI_Set_Window(u16 sx,u16 sy,u16 width,u16 height);

@@ -1,8 +1,8 @@
 
 #include "image.h"
 
-#define	IMG_HSIZE	752
-#define	IMG_VSIZE	480
+//#define	IMG_HSIZE	752
+//#define	IMG_VSIZE	480
 
 #define min(x,y) ((x)>(y)?(y):(x))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -162,7 +162,7 @@ void bayer2rgb(unsigned char *dst, unsigned char *src, long width, long height)
 	image = dst;					//rgb
 
 	for( y = 0; y < height; y++ ) //行数
-	{ 
+	{
 		for( x = 0; x < width; x++ )	//列数
 		{	
 ////////////////////////////////////////////////////////////////////////////////////////////

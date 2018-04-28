@@ -150,7 +150,7 @@ int extclk_config(int frequency)
   * @brief  Configures the mt9v034 camera with two context (binning 4 and binning 2).
   */
 
-uint16_t MT9V034_Width,MT9V034_height;
+uint32_t MT9V034_Width,MT9V034_height;
 
 static int reset(void)
 {
@@ -232,8 +232,8 @@ static int set_framesize(uint16_t framesize)
 ////     width  = resolution[framesize][0]; 
 ////     height = resolution[framesize][1];
 
-	  width  = 40; 
-    height = 30;
+	  width  = 752; 
+    height = 480;
 	
 		MT9V034_Width = width;
 		MT9V034_height = height;
@@ -319,26 +319,24 @@ static int set_framesize(uint16_t framesize)
 //			mt9v034_WriteReg16(MT9V034_READ_MODE,(MT9V034_READ_MODE_DARK_ROWS));
 //			mt9v034_WriteReg16(MT9V034_READ_MODE,(MT9V034_READ_MODE_DARK_COLS));	
 			
-			mt9v034_WriteReg16(MT9V034_RESET, 1);
-			mt9v034_WriteReg16(MT9V034_RESET, 0);
-			
-			mt9v034_WriteReg16(MT9V034_CHIP_CONTROL, 0x0388);
-			mt9v034_WriteReg16(MT9V034_READ_MODE, 0x0330);	
-			mt9v034_WriteReg16( MT9V034_COL_START,0x0001);
-			mt9v034_WriteReg16( MT9V034_ROW_START,0x0004);			
+//			mt9v034_WriteReg16(MT9V034_RESET, 1);
+//			mt9v034_WriteReg16(MT9V034_RESET, 0);
+//			
+//			mt9v034_WriteReg16(MT9V034_CHIP_CONTROL, 0x0188);
+//			mt9v034_WriteReg16(MT9V034_READ_MODE, 0x0000);	
+//			mt9v034_WriteReg16( MT9V034_COL_START,0x0001);
+//			mt9v034_WriteReg16( MT9V034_ROW_START,0x0004);			
 			mt9v034_WriteReg16( MT9V034_WINDOW_WIDTH, MT9V034_Width);
 			mt9v034_WriteReg16( MT9V034_WINDOW_HEIGHT, MT9V034_height);
-			mt9v034_WriteReg16( MT9V034_PIXEL_OPERATION_MODE, MT9V034_PIXEL_OPERATION_MODE_COLOR);
-			mt9v034_WriteReg16( MT9V034_ANALOG_GAIN_CONTROL, MT9V034_ANALOG_GAIN_MIN);
+//			mt9v034_WriteReg16( MT9V034_PIXEL_OPERATION_MODE, MT9V034_PIXEL_OPERATION_MODE_COLOR);
+//			mt9v034_WriteReg16( MT9V034_ANALOG_GAIN_CONTROL, MT9V034_ANALOG_GAIN_MIN);
 
 			mt9v034_WriteReg16(MT9V034_RESET, 1);
 			mt9v034_WriteReg16(MT9V034_RESET, 0);
 
-
-
-			mt9v034_WriteReg16(0x72, 0x0000); //sync ctrl 
-			//i2c_set_register(0x7F, ((1 << 13) | (1 << 10) | (1 << 5))); //test pattern 
-			mt9v034_WriteReg16(0x7F, 0x00); 
+//			mt9v034_WriteReg16(0x72, 0x0000); //sync ctrl 
+//			//i2c_set_register(0x7F, ((1 << 13) | (1 << 10) | (1 << 5))); //test pattern 
+//			mt9v034_WriteReg16(0x7F, 0x00); 
 			
 		
 		

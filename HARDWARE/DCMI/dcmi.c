@@ -117,7 +117,7 @@ void HAL_DCMI_MspInit(DCMI_HandleTypeDef* hdcmi)
 //mem1addr:存储器地址1  当只使用mem0addr的时候,该值必须为0
 //memblen:存储器位宽,可以为:DMA_MDATAALIGN_BYTE/DMA_MDATAALIGN_HALFWORD/DMA_MDATAALIGN_WORD
 //meminc:存储器增长方式,可以为:DMA_MINC_ENABLE/DMA_MINC_DISABLE
-void DCMI_DMA_Init(u32 mem0addr,u32 mem1addr,u16 memsize,u32 memblen,u32 meminc)
+void DCMI_DMA_Init(u32 mem0addr,u32 mem1addr,u32 memsize,u32 memblen,u32 meminc)
 { 
     __HAL_RCC_DMA2_CLK_ENABLE();                                    //使能DMA2时钟
     __HAL_LINKDMA(&DCMI_Handler,DMA_Handle,DMADMCI_Handler);        //将DMA与DCMI联系起来
@@ -151,8 +151,8 @@ void DCMI_DMA_Init(u32 mem0addr,u32 mem1addr,u16 memsize,u32 memblen,u32 meminc)
     __HAL_UNLOCK(&DMADMCI_Handler);
     if(mem1addr==0)    //开启DMA，不使用双缓冲
     {
-				HAL_DMA_Start(&DMADMCI_Handler,(u32)&DCMI->DR,mem0addr,memsize); //DCMI_MODE_CONTINUOUS  DCMI_MODE_SNAPSHOT
-				//HAL_DCMI_Start_DMA(&DCMI_Handler,DCMI_MODE_CONTINUOUS,mem0addr,memsize);
+				//HAL_DMA_Start(&DMADMCI_Handler,(u32)&DCMI->DR,mem0addr,memsize); //DCMI_MODE_CONTINUOUS  DCMI_MODE_SNAPSHOT
+				HAL_DCMI_Start_DMA(&DCMI_Handler,DCMI_MODE_CONTINUOUS,mem0addr,memsize);
     }
     else                //使用双缓冲
     {
@@ -199,7 +199,7 @@ void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi)
 			Frame_Flag = 0;
 		LED1_Toggle;
 		ov_frame++; 
-
+//		raw_data_process();
 //		if(Frame_Time<50)
 //				Frame_Time++;
 //		else
@@ -213,7 +213,7 @@ void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
 {
 		//uint32_t xlength,startx,endx=640,endy=480,i;
 		//jpeg_data_process();//jpeg数据处理
-		
+		//DCMI_Start();
 		raw_data_process();
 		Frame_Flag = 0;
 		LED1_Toggle;

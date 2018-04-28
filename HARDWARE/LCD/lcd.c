@@ -1860,7 +1860,7 @@ void LCD_Init(void)
         FSMC_WriteTim.DataSetupTime=5;         
         FMC_NORSRAM_Extended_Timing_Init(SRAM_Handler.Extended,&FSMC_WriteTim,SRAM_Handler.Init.NSBank,SRAM_Handler.Init.ExtendedMode);
     }	
-	LCD_Display_Dir(0);		//默认为竖屏
+	LCD_Display_Dir(1);		//默认为竖屏
 	LCD_LED(1);				//点亮背光
 	LCD_Clear(WHITE);
 }  

@@ -27,24 +27,34 @@ Project File Date:  04/27/2018
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 5 (build 528)', folder: 'd:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'CAMERA'
-compiling image.c...
+compiling main.c...
 ..\HARDWARE\MT9V034\image.h(50): warning:  #1-D: last line of file ends without a newline
   #endif /* MT9V34_H_ */
-..\HARDWARE\MT9V034\image.c(85): warning:  #223-D: function "abs" declared implicitly
-  				hg 	= bayer[abs(x   + (y-1)*width)] 	- bayer[abs(x   + (y+1)*width)];
-..\HARDWARE\MT9V034\image.c(116): warning:  #223-D: function "abs" declared implicitly
-  				hg 	= bayer[abs(x   + (y-1)*width)] 	- bayer[abs(x   + (y+1)*width)];
-..\HARDWARE\MT9V034\image.c(144): warning:  #223-D: function "abs" declared implicitly
-  				blue 	= (bayer[abs(x-1 +  y *width)] + bayer[x+1 +  y*width])/2;
-..\HARDWARE\MT9V034\image.c(190): warning:  #223-D: function "abs" declared implicitly
-  				green = (bayer[x + (y-1)*width] + bayer[x + (y+1)*width]+bayer[abs(x-1 +  y*width)]	+ bayer[x+1 + 	y*width]) /4 ;
-..\HARDWARE\MT9V034\image.c(201): warning:  #1-D: last line of file ends without a newline
-  }
-..\HARDWARE\MT9V034\image.c: 6 warnings, 0 errors
+main.c(59): warning:  #177-D: variable "rlen"  was declared but never referenced
+  	u16 rlen;			//剩余数据长度
+main.c(60): warning:  #177-D: variable "pbuf"  was declared but never referenced
+  	u32 *pbuf;
+main.c(61): warning:  #177-D: variable "y"  was declared but never referenced
+  	u32 y;
+main.c(136): warning:  #177-D: variable "k"  was declared but never referenced
+  	u32 k=0;
+main.c(137): warning:  #177-D: variable "fac"  was declared but never referenced
+  	u8 res,fac;							 
+main.c(139): warning:  #177-D: variable "key"  was declared but never referenced
+  	u8 key;						//键值		   
+main.c(141): warning:  #550-D: variable "sd_ok"  was set but never used
+  	u8 sd_ok=1;					//0,sd卡不正常;1,SD卡正常. 
+main.c(142): warning:  #177-D: variable "scale"  was declared but never referenced
+   	u8 scale=1;					//默认是全尺寸缩放
+main.c(143): warning:  #177-D: variable "msgbuf"  was declared but never referenced
+  	u8 msgbuf[15];				//消息缓存区 
+main.c(144): warning:  #177-D: variable "outputheight"  was declared but never referenced
+  	u16 outputheight=0;
+main.c: 11 warnings, 0 errors
 linking...
-Program Size: Code=53644 RO-data=25052 RW-data=616 ZI-data=33898672  
+Program Size: Code=78588 RO-data=26084 RW-data=604 ZI-data=33903628  
 FromELF: creating hex file...
-"..\OBJ\CAMERA.axf" - 0 Error(s), 6 Warning(s).
+"..\OBJ\CAMERA.axf" - 0 Error(s), 11 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -58,7 +68,7 @@ Package Vendor: Keil
   d:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:04
 </pre>
 </body>
 </html>
