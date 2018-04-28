@@ -84,3 +84,6 @@
 ..\obj\dcmi.o: ..\HARDWARE\OV5640\ov5640.h
 ..\obj\dcmi.o: ..\HARDWARE\OV5640\sccb.h
 ..\obj\dcmi.o: ..\SYSTEM\delay\delay.h
+..\obj\dcmi.o: ..\HARDWARE\MT9V034\image.h
+..\obj\dcmi.o: ..\HARDWARE\MT9V034\settings.h
+..\obj\dcmi.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h

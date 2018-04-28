@@ -84,3 +84,5 @@
 ..\obj\mt9v034.o: ..\HARDWARE\LCD\ltdc.h
 ..\obj\mt9v034.o: ..\HARDWARE\MT9V034\mt9v034.h
 ..\obj\mt9v034.o: ..\HARDWARE\MT9V034\settings.h
+..\obj\mt9v034.o: ..\HARDWARE\LCD\lcd.h
+..\obj\mt9v034.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

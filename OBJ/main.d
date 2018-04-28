@@ -111,3 +111,5 @@
 ..\obj\main.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 ..\obj\main.o: ..\HARDWARE\MT9V034\mt9v034.h
 ..\obj\main.o: ..\HARDWARE\MT9V034\settings.h
+..\obj\main.o: ..\HARDWARE\MT9V034\image.h
+..\obj\main.o: d:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h

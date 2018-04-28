@@ -5,6 +5,7 @@
 #include "led.h" 
 #include "ov5640.h" 
 #include "delay.h"
+#include "image.h"
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK STM32F7开发板
@@ -55,12 +56,11 @@ void DCMI_Init(void)
     
      //关闭行中断、VSYNC中断、同步错误中断和溢出中断
     __HAL_DCMI_DISABLE_IT(&DCMI_Handler,DCMI_IT_LINE|DCMI_IT_VSYNC|DCMI_IT_ERR|DCMI_IT_OVR);
-    __HAL_DCMI_ENABLE_IT(&DCMI_Handler,DCMI_IT_FRAME);      //使能帧中断
+		__HAL_DCMI_ENABLE_IT(&DCMI_Handler,DCMI_IT_FRAME);      //使能帧中断
 	
 		//__HAL_DCMI_ENABLE_IT(&DCMI_Handler,DCMI_IT_VSYNC);      //使能帧中断
     __HAL_DCMI_ENABLE(&DCMI_Handler);                       //使能DCMI
 
-	//HAL_DCMI_Start_DMA(&DCMI_Handler,(u32)&DCMI->DR,mem0addr,memsize);
 }
 
 //DCMI底层驱动，引脚配置，时钟使能，中断配置
@@ -151,16 +151,15 @@ void DCMI_DMA_Init(u32 mem0addr,u32 mem1addr,u16 memsize,u32 memblen,u32 meminc)
     __HAL_UNLOCK(&DMADMCI_Handler);
     if(mem1addr==0)    //开启DMA，不使用双缓冲
     {
-			
-				//HAL_DMA_Start(&DMADMCI_Handler,(u32)&DCMI->DR,mem0addr,memsize); //DCMI_MODE_CONTINUOUS  DCMI_MODE_SNAPSHOT
-				HAL_DCMI_Start_DMA(&DCMI_Handler,DCMI_MODE_CONTINUOUS,mem0addr,memsize);
+				HAL_DMA_Start(&DMADMCI_Handler,(u32)&DCMI->DR,mem0addr,memsize); //DCMI_MODE_CONTINUOUS  DCMI_MODE_SNAPSHOT
+				//HAL_DCMI_Start_DMA(&DCMI_Handler,DCMI_MODE_CONTINUOUS,mem0addr,memsize);
     }
     else                //使用双缓冲
     {
-        HAL_DMAEx_MultiBufferStart(&DMADMCI_Handler,(u32)&DCMI->DR,mem0addr,mem1addr,memsize);//开启双缓冲
-        __HAL_DMA_ENABLE_IT(&DMADMCI_Handler,DMA_IT_TC);    //开启传输完成中断
-        HAL_NVIC_SetPriority(DMA2_Stream1_IRQn,0,0);        //DMA中断优先级
-        HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
+//        HAL_DMAEx_MultiBufferStart(&DMADMCI_Handler,(u32)&DCMI->DR,mem0addr,mem1addr,memsize);//开启双缓冲
+//        __HAL_DMA_ENABLE_IT(&DMADMCI_Handler,DMA_IT_TC);    //开启传输完成中断
+//        HAL_NVIC_SetPriority(DMA2_Stream1_IRQn,0,0);        //DMA中断优先级
+//        HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
     }    
 }
 
@@ -171,7 +170,6 @@ void DCMI_Start(void)
 		LCD_WriteRAM_Prepare();		        //开始写入GRAM
     __HAL_DMA_ENABLE(&DMADMCI_Handler); //使能DMA
     DCMI->CR|=DCMI_CR_CAPTURE;          //DCMI捕获使能
-
 }
 
 //DCMI,关闭传输
@@ -193,20 +191,38 @@ void DCMI_IRQHandler(void)
 
 uint8_t Frame_Flag;
 uint8_t Frame_Time=0;
+
+extern u32 *jpeg_data_buf;
+void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi)
+{
+
+			Frame_Flag = 0;
+		LED1_Toggle;
+		ov_frame++; 
+
+//		if(Frame_Time<50)
+//				Frame_Time++;
+//		else
+//			raw_data_process();
+		//	DCMI_Start(); 			//启动传输
+    //重新使能帧中断,因为HAL_DCMI_IRQHandler()函数会关闭帧中断
+    __HAL_DCMI_ENABLE_IT(&DCMI_Handler,DCMI_IT_VSYNC);
+}
+
 void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
 {
-		
+		//uint32_t xlength,startx,endx=640,endy=480,i;
 		//jpeg_data_process();//jpeg数据处理
 		
-		//DCMI_Stop();
+		raw_data_process();
 		Frame_Flag = 0;
 		LED1_Toggle;
 		ov_frame++; 
 //		if(Frame_Time<50)
 //				Frame_Time++;
 //		else
-//			raw_data_process();
-			DCMI_Start(); 			//启动传输
+			
+		//	DCMI_Start(); 			//启动传输
     //重新使能帧中断,因为HAL_DCMI_IRQHandler()函数会关闭帧中断
     __HAL_DCMI_ENABLE_IT(&DCMI_Handler,DCMI_IT_FRAME);
 }

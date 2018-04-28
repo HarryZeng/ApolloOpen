@@ -15,7 +15,7 @@
 
 TIM_HandleTypeDef TIM3_Handler;      //定时器句柄 
 extern u8 ov_frame;
-extern volatile u16 jpeg_data_len;
+
 //通用定时器3中断初始化
 //arr：自动重装值。
 //psc：时钟预分频数
@@ -55,7 +55,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if(htim==(&TIM3_Handler))
     {
         printf("frame:%d\r\n",ov_frame);//打印帧率
-		printf("jpeg_data_len:%d\r\n",jpeg_data_len);//打印帧率
+		//printf("jpeg_data_len:%d\r\n",jpeg_data_len);//打印帧率
 		ov_frame=0;
     }
 }

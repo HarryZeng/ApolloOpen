@@ -52,6 +52,8 @@
 "..\obj\mpu.o"
 "..\obj\mt9v034.o"
 "..\obj\settings.o"
+"..\obj\image.o"
+"..\obj\biliner.o"
 "..\obj\usmart.o"
 "..\obj\usmart_str.o"
 "..\obj\usmart_config.o"
